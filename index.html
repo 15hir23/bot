@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CiviQ - AI Business Assistant</title>
-    <style>
+     <style>
         * {
             margin: 0;
             padding: 0;
@@ -217,7 +217,7 @@
             padding: 20px 32px;
             border-bottom: 1px solid;
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
         }
 
@@ -291,9 +291,42 @@
             background: var(--grey-100);
         }
 
+        .light .theme-toggle:hover {
+            background: var(--grey-200);
+        }
+
         .dark .theme-toggle {
             background: var(--grey-800);
             color: var(--grey-300);
+        }
+
+        .dark .theme-toggle:hover {
+            background: var(--grey-700);
+        }
+
+        /* Floating Info */
+        .floating-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
+            z-index: 10;
+        }
+
+        .light .floating-info {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--grey-200);
+            color: var(--grey-600);
+        }
+
+        .dark .floating-info {
+            background: rgba(31, 41, 55, 0.9);
+            border-color: var(--grey-700);
+            color: var(--grey-400);
         }
 
         /* Chat Area */
@@ -304,84 +337,24 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
-        }
-
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .dashboard-card {
-            padding: 24px;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .light .dashboard-card {
-            background: var(--white);
-            box-shadow: var(--shadow-md);
-        }
-
-        .dark .dashboard-card {
-            background: var(--grey-800);
-            border: 1px solid var(--grey-700);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .card-value {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--teal-primary), var(--indigo-primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .mini-chart {
-            height: 60px;
-            background: linear-gradient(135deg, 
-                rgba(20, 184, 166, 0.1) 0%, 
-                rgba(99, 102, 241, 0.1) 100%);
-            border-radius: 8px;
-            margin-top: 16px;
             position: relative;
-            overflow: hidden;
-        }
-
-        .mini-chart::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 30%;
-            background: linear-gradient(135deg, var(--teal-primary), var(--indigo-primary));
-            opacity: 0.6;
-            clip-path: polygon(0 100%, 20% 80%, 40% 60%, 60% 70%, 80% 40%, 100% 30%, 100% 100%);
         }
 
         .message {
             display: flex;
             gap: 16px;
             max-width: 800px;
+            animation: fadeIn 0.3s ease;
         }
 
         .message.user {
             margin-left: auto;
             flex-direction: row-reverse;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message-avatar {
@@ -421,10 +394,44 @@
             border: 1px solid var(--grey-700);
         }
 
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 16px 20px;
+        }
+
+        .light .typing-indicator {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            border-radius: 16px;
+        }
+
+        .dark .typing-indicator {
+            background: var(--grey-800);
+            border: 1px solid var(--grey-700);
+            border-radius: 16px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--grey-400);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
         /* Input Area */
         .input-area {
-            position: sticky;
-            bottom: 0;
             padding: 32px;
             border-top: 1px solid;
         }
@@ -487,7 +494,7 @@
         .input-wrapper {
             position: relative;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 12px;
         }
 
@@ -502,6 +509,7 @@
             resize: none;
             min-height: 56px;
             max-height: 120px;
+            font-family: inherit;
         }
 
         .light .message-input {
@@ -526,6 +534,10 @@
             box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
         }
 
+        .message-input::placeholder {
+            opacity: 0.5;
+        }
+
         .send-btn {
             width: 56px;
             height: 56px;
@@ -539,6 +551,7 @@
             justify-content: center;
             font-size: 20px;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
         .send-btn:hover {
@@ -546,40 +559,40 @@
             box-shadow: var(--shadow-lg);
         }
 
-        .floating-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-            border: 1px solid;
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .light .floating-info {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: var(--grey-200);
-            color: var(--grey-600);
-        }
-
-        .dark .floating-info {
-            background: rgba(31, 41, 55, 0.9);
-            border-color: var(--grey-700);
-            color: var(--grey-400);
-        }
-
+        /* Responsive Design */
         @media (max-width: 768px) {
             .sidebar {
                 display: none;
             }
             
-            .dashboard-cards {
-                grid-template-columns: 1fr;
-            }
-            
             .chat-area, .input-area {
                 padding: 16px;
+            }
+
+            .header {
+                padding: 16px 20px;
+            }
+
+            .floating-info {
+                top: 10px;
+                right: 10px;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .suggestions {
+                gap: 8px;
+            }
+
+            .suggestion-chip {
+                font-size: 12px;
+                padding: 6px 12px;
             }
         }
     </style>
@@ -589,7 +602,7 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo">
-                <div class="logo-icon">CC</div>
+                <div class="logo-icon">CQ</div>
                 <div class="logo-text">CiviQ</div>
             </div>
 
@@ -652,74 +665,18 @@
                 </div>
             </div>
 
-            <div class="floating-info">
-                Connected: Google Drive, Slack, Notion, Sheets
-            </div>
-
-            <div class="chat-area">
-                <!-- Dashboard Cards -->
-                <div class="dashboard-cards">
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <div class="card-title">Active Alerts</div>
-                            <span>🚨</span>
-                        </div>
-                        <div class="card-value">3</div>
-                        <div class="mini-chart"></div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <div class="card-title">Data Sources</div>
-                            <span>🔗</span>
-                        </div>
-                        <div class="card-value">4</div>
-                        <div class="mini-chart"></div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <div class="card-title">Reports Generated</div>
-                            <span>📊</span>
-                        </div>
-                        <div class="card-value">247</div>
-                        <div class="mini-chart"></div>
-                    </div>
+            <div class="chat-area" id="chatArea">
+                <div class="floating-info">
+                    Connected: Google Drive, Slack, Notion, Sheets
                 </div>
 
-                <!-- Chat Messages -->
+                <!-- Initial Messages -->
                 <div class="message">
-                    <div class="message-avatar ai-avatar">CC</div>
+                    <div class="message-avatar ai-avatar">CQ</div>
                     <div class="message-content">
                         Welcome to Civic Copilot! I'm your AI business assistant, ready to help you with operational insights, risk monitoring, and data analysis. I'm currently connected to your Google Drive, Slack, Notion, and Google Sheets.
                         <br><br>
                         I've detected 3 new alerts that require your attention and have fresh data from your connected sources. How can I assist you today?
-                    </div>
-                </div>
-
-                <div class="message user">
-                    <div class="message-avatar user-avatar">U</div>
-                    <div class="message-content">
-                        Can you show me the latest performance metrics and any critical alerts?
-                    </div>
-                </div>
-
-                <div class="message">
-                    <div class="message-avatar ai-avatar">CC</div>
-                    <div class="message-content">
-                        I've analyzed your latest data across all connected platforms. Here's what I found:
-                        <br><br>
-                        <strong>📈 Performance Highlights:</strong>
-                        <br>• Revenue increased 12% this quarter
-                        <br>• Team productivity up 8% (Slack activity analysis)
-                        <br>• Project completion rate: 94%
-                        <br><br>
-                        <strong>🚨 Critical Alerts:</strong>
-                        <br>• Budget variance detected: Marketing spend 15% over target
-                        <br>• Server response times elevated (2x normal)
-                        <br>• 3 overdue project milestones identified
-                        <br><br>
-                        Would you like me to generate a detailed report or create an action plan for these issues?
                     </div>
                 </div>
             </div>
@@ -728,22 +685,24 @@
             <div class="input-area">
                 <div class="input-container">
                     <div class="suggestions">
-                        <button class="suggestion-chip">📊 Weekly summary</button>
-                        <button class="suggestion-chip">🚨 Check alerts</button>
-                        <button class="suggestion-chip">📈 Revenue analysis</button>
-                        <button class="suggestion-chip">📋 Create action plan</button>
+                        <button class="suggestion-chip" onclick="sendSuggestion('📊 Weekly summary')">📊 Weekly summary</button>
+                        <button class="suggestion-chip" onclick="sendSuggestion('🚨 Check alerts')">🚨 Check alerts</button>
+                        <button class="suggestion-chip" onclick="sendSuggestion('📈 Revenue analysis')">📈 Revenue analysis</button>
+                        <button class="suggestion-chip" onclick="sendSuggestion('📋 Create action plan')">📋 Create action plan</button>
                     </div>
                     <div class="input-wrapper">
-                        <textarea class="message-input" placeholder="Ask me about your business data, request insights, or create reports..." rows="1"></textarea>
-                        <button class="send-btn">↗</button>
+                        <textarea class="message-input" id="messageInput" placeholder="Ask me about your business data, request insights, or create reports..." rows="1"></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">↗</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+
     <script>
         let isDark = false;
+        let isTyping = false;
 
         function toggleTheme() {
             const body = document.body;
@@ -760,8 +719,107 @@
             }
         }
 
+        function addMessage(content, isUser = false) {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : ''}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `message-avatar ${isUser ? 'user-avatar' : 'ai-avatar'}`;
+            avatar.textContent = isUser ? 'U' : 'CQ';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.innerHTML = content;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            chatArea.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            const chatArea = document.getElementById('chatArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.id = 'typingIndicator';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar ai-avatar';
+            avatar.textContent = 'CQ';
+            
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message-content typing-indicator';
+            typingDiv.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(typingDiv);
+            chatArea.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function simulateAIResponse(userMessage) {
+            const responses = [
+                "I'm analyzing your request. Based on the data from your connected sources, here are the key insights you're looking for...",
+                "Let me pull the latest information from your systems. I can see some interesting patterns in your data that might be relevant...",
+                "I've processed your query and found several important points to highlight. Here's what the data shows...",
+                "Based on my analysis of your recent activity across all platforms, I can provide you with the following insights...",
+                "I've reviewed your latest data and identified some key trends. Let me break this down for you..."
+            ];
+            
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            // Add typing indicator
+            addTypingIndicator();
+            isTyping = true;
+            
+            // Simulate AI thinking time (2-4 seconds)
+            setTimeout(() => {
+                removeTypingIndicator();
+                addMessage(randomResponse);
+                isTyping = false;
+            }, Math.random() * 2000 + 2000);
+        }
+
+        function sendMessage() {
+            const textarea = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const input = textarea.value.trim();
+            
+            if (input && !isTyping) {
+                // Add user message
+                addMessage(input, true);
+                
+                // Clear input
+                textarea.value = '';
+                textarea.style.height = 'auto';
+                
+                // Disable send button while typing
+                sendBtn.disabled = true;
+                
+                // Simulate AI response
+                simulateAIResponse(input);
+                
+                // Re-enable send button after response
+                setTimeout(() => {
+                    sendBtn.disabled = false;
+                }, 4000);
+            }
+        }
+
         // Auto-resize textarea
-        const textarea = document.querySelector('.message-input');
+        const textarea = document.getElementById('messageInput');
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
@@ -784,33 +842,14 @@
             });
         });
 
-        // Add hover effects to dashboard cards
-        document.querySelectorAll('.dashboard-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-4px)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-
         // Add send button functionality
-        document.querySelector('.send-btn').addEventListener('click', function() {
-            const input = textarea.value.trim();
-            if (input) {
-                // Here you would normally send the message
-                console.log('Sending message:', input);
-                textarea.value = '';
-                textarea.style.height = 'auto';
-            }
-        });
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
 
         // Handle Enter key in textarea
         textarea.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                document.querySelector('.send-btn').click();
+                sendMessage();
             }
         });
     </script>
