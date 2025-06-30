@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civic Copilot - AI Business Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --teal-primary: #14b8a6;
+            --teal-secondary: #0d9488;
+            --indigo-primary: #6366f1;
+            --indigo-secondary: #4f46e5;
+            --grey-50: #f9fafb;
+            --grey-100: #f3f4f6;
+            --grey-200: #e5e7eb;
+            --grey-300: #d1d5db;
+            --grey-400: #9ca3af;
+            --grey-500: #6b7280;
+            --grey-600: #4b5563;
+            --grey-700: #374151;
+            --grey-800: #1f2937;
+            --grey-900: #111827;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Light Mode */
+        body.light {
+            background: linear-gradient(135deg, var(--grey-50) 0%, var(--grey-100) 100%);
+            color: var(--grey-800);
+        }
+
+        /* Dark Mode */
+        body.dark {
+            background: linear-gradient(135deg, var(--grey-900) 0%, #0f172a 100%);
+            color: var(--grey-100);
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            padding: 20px;
+            border-right: 1px solid;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .light .sidebar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-color: var(--grey-200);
+        }
+
+        .dark .sidebar {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-color: var(--grey-700);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding: 8px 0;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--teal-primary), var(--indigo-primary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--teal-primary), var(--indigo-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .quick-actions {
+            display: grid;
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .light .action-btn {
+            background: var(--white);
+            color: var(--grey-700);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .light .action-btn:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .dark .action-btn {
+            background: var(--grey-800);
+            color: var(--grey-200);
+            border: 1px solid var(--grey-700);
+        }
+
+        .dark .action-btn:hover {
+            background: var(--grey-700);
+            transform: translateY(-1px);
+        }
+
+        .recent-reports {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .report-item {
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .light .report-item {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .light .report-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .dark .report-item {
+            background: var(--grey-800);
+            border: 1px solid var(--grey-700);
+        }
+
+        .dark .report-item:hover {
+            background: var(--grey-700);
+        }
+
+        .report-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .report-meta {
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 32px;
+            border-bottom: 1px solid;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .light .header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-color: var(--grey-200);
+        }
+
+        .dark .header {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-color: var(--grey-700);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .light .status-indicator {
+            background: var(--grey-100);
+            color: var(--grey-700);
+        }
+
+        .dark .status-indicator {
+            background: var(--grey-800);
+            color: var(--grey-300);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--teal-primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .theme-toggle {
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .light .theme-toggle {
+            background: var(--grey-100);
+        }
+
+        .dark .theme-toggle {
+            background: var(--grey-800);
+            color: var(--grey-300);
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .dashboard-card {
+            padding: 24px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .light .dashboard-card {
+            background: var(--white);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dark .dashboard-card {
+            background: var(--grey-800);
+            border: 1px solid var(--grey-700);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--teal-primary), var(--indigo-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mini-chart {
+            height: 60px;
+            background: linear-gradient(135deg, 
+                rgba(20, 184, 166, 0.1) 0%, 
+                rgba(99, 102, 241, 0.1) 100%);
+            border-radius: 8px;
+            margin-top: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mini-chart::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(135deg, var(--teal-primary), var(--indigo-primary));
+            opacity: 0.6;
+            clip-path: polygon(0 100%, 20% 80%, 40% 60%, 60% 70%, 80% 40%, 100% 30%, 100% 100%);
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+            max-width: 800px;
+        }
+
+        .message.user {
+            margin-left: auto;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .ai-avatar {
+            background: linear-gradient(135deg, var(--teal-primary), var(--indigo-primary));
+            color: white;
+        }
+
+        .user-avatar {
+            background: var(--grey-400);
+            color: white;
+        }
+
+        .message-content {
+            padding: 16px 20px;
+            border-radius: 16px;
+            line-height: 1.6;
+        }
+
+        .light .message-content {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dark .message-content {
+            background: var(--grey-800);
+            border: 1px solid var(--grey-700);
+        }
+
+        /* Input Area */
+        .input-area {
+            position: sticky;
+            bottom: 0;
+            padding: 32px;
+            border-top: 1px solid;
+        }
+
+        .light .input-area {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-color: var(--grey-200);
+        }
+
+        .dark .input-area {
+            background: rgba(31, 41, 55, 0.9);
+            backdrop-filter: blur(10px);
+            border-color: var(--grey-700);
+        }
+
+        .input-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .suggestions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .suggestion-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .light .suggestion-chip {
+            background: var(--grey-100);
+            color: var(--grey-700);
+        }
+
+        .light .suggestion-chip:hover {
+            background: var(--teal-primary);
+            color: white;
+        }
+
+        .dark .suggestion-chip {
+            background: var(--grey-800);
+            color: var(--grey-300);
+            border: 1px solid var(--grey-700);
+        }
+
+        .dark .suggestion-chip:hover {
+            background: var(--teal-primary);
+            color: white;
+            border-color: var(--teal-primary);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid;
+            border-radius: 24px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s ease;
+            resize: none;
+            min-height: 56px;
+            max-height: 120px;
+        }
+
+        .light .message-input {
+            background: var(--white);
+            border-color: var(--grey-200);
+            color: var(--grey-800);
+        }
+
+        .light .message-input:focus {
+            border-color: var(--teal-primary);
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        }
+
+        .dark .message-input {
+            background: var(--grey-800);
+            border-color: var(--grey-700);
+            color: var(--grey-100);
+        }
+
+        .dark .message-input:focus {
+            border-color: var(--teal-primary);
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        }
+
+        .send-btn {
+            width: 56px;
+            height: 56px;
+            border: none;
+            border-radius: 28px;
+            background: linear-gradient(135deg, var(--teal-primary), var(--indigo-primary));
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .floating-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
+        }
+
+        .light .floating-info {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--grey-200);
+            color: var(--grey-600);
+        }
+
+        .dark .floating-info {
+            background: rgba(31, 41, 55, 0.9);
+            border-color: var(--grey-700);
+            color: var(--grey-400);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-area, .input-area {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">CC</div>
+                <div class="logo-text">Civic Copilot</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-title">Quick Actions</div>
+                <div class="quick-actions">
+                    <button class="action-btn">
+                        <span>📊</span>
+                        Summarize Data
+                    </button>
+                    <button class="action-btn">
+                        <span>🚨</span>
+                        Show Alerts
+                    </button>
+                    <button class="action-btn">
+                        <span>📋</span>
+                        Draft Plan
+                    </button>
+                    <button class="action-btn">
+                        <span>📈</span>
+                        Generate Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-title">Recent Reports</div>
+                <div class="recent-reports">
+                    <div class="report-item">
+                        <div class="report-title">Q4 Performance Summary</div>
+                        <div class="report-meta">2 hours ago • Google Sheets</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-title">Risk Assessment Alert</div>
+                        <div class="report-meta">5 hours ago • Slack Integration</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-title">Weekly Team Insights</div>
+                        <div class="report-meta">1 day ago • Notion</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-title">Budget Analysis</div>
+                        <div class="report-meta">2 days ago • Google Drive</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        All Systems Online
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                </div>
+            </div>
+
+            <div class="floating-info">
+                Connected: Google Drive, Slack, Notion, Sheets
+            </div>
+
+            <div class="chat-area">
+                <!-- Dashboard Cards -->
+                <div class="dashboard-cards">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div class="card-title">Active Alerts</div>
+                            <span>🚨</span>
+                        </div>
+                        <div class="card-value">3</div>
+                        <div class="mini-chart"></div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div class="card-title">Data Sources</div>
+                            <span>🔗</span>
+                        </div>
+                        <div class="card-value">4</div>
+                        <div class="mini-chart"></div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div class="card-title">Reports Generated</div>
+                            <span>📊</span>
+                        </div>
+                        <div class="card-value">247</div>
+                        <div class="mini-chart"></div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="message">
+                    <div class="message-avatar ai-avatar">CC</div>
+                    <div class="message-content">
+                        Welcome to Civic Copilot! I'm your AI business assistant, ready to help you with operational insights, risk monitoring, and data analysis. I'm currently connected to your Google Drive, Slack, Notion, and Google Sheets.
+                        <br><br>
+                        I've detected 3 new alerts that require your attention and have fresh data from your connected sources. How can I assist you today?
+                    </div>
+                </div>
+
+                <div class="message user">
+                    <div class="message-avatar user-avatar">U</div>
+                    <div class="message-content">
+                        Can you show me the latest performance metrics and any critical alerts?
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar ai-avatar">CC</div>
+                    <div class="message-content">
+                        I've analyzed your latest data across all connected platforms. Here's what I found:
+                        <br><br>
+                        <strong>📈 Performance Highlights:</strong>
+                        <br>• Revenue increased 12% this quarter
+                        <br>• Team productivity up 8% (Slack activity analysis)
+                        <br>• Project completion rate: 94%
+                        <br><br>
+                        <strong>🚨 Critical Alerts:</strong>
+                        <br>• Budget variance detected: Marketing spend 15% over target
+                        <br>• Server response times elevated (2x normal)
+                        <br>• 3 overdue project milestones identified
+                        <br><br>
+                        Would you like me to generate a detailed report or create an action plan for these issues?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container">
+                    <div class="suggestions">
+                        <button class="suggestion-chip">📊 Weekly summary</button>
+                        <button class="suggestion-chip">🚨 Check alerts</button>
+                        <button class="suggestion-chip">📈 Revenue analysis</button>
+                        <button class="suggestion-chip">📋 Create action plan</button>
+                    </div>
+                    <div class="input-wrapper">
+                        <textarea class="message-input" placeholder="Ask me about your business data, request insights, or create reports..." rows="1"></textarea>
+                        <button class="send-btn">↗</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isDark = false;
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle');
+            
+            isDark = !isDark;
+            
+            if (isDark) {
+                body.className = 'dark';
+                themeToggle.textContent = '☀️';
+            } else {
+                body.className = 'light';
+                themeToggle.textContent = '🌙';
+            }
+        }
+
+        // Auto-resize textarea
+        const textarea = document.querySelector('.message-input');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Add interactivity to suggestions
+        document.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                textarea.value = this.textContent.substring(2); // Remove emoji
+                textarea.focus();
+            });
+        });
+
+        // Add interactivity to action buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.textContent.trim();
+                textarea.value = `Please ${action.toLowerCase()}`;
+                textarea.focus();
+            });
+        });
+
+        // Add hover effects to dashboard cards
+        document.querySelectorAll('.dashboard-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Add send button functionality
+        document.querySelector('.send-btn').addEventListener('click', function() {
+            const input = textarea.value.trim();
+            if (input) {
+                // Here you would normally send the message
+                console.log('Sending message:', input);
+                textarea.value = '';
+                textarea.style.height = 'auto';
+            }
+        });
+
+        // Handle Enter key in textarea
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.querySelector('.send-btn').click();
+            }
+        });
+    </script>
+</body>
+</html>
